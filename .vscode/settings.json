@@ -1,0 +1,15 @@
+{
+	"deno.enable": true,
+	"deno.lint": true,
+	"deno.unstable": false,
+	"cSpell.words": [
+		"Dreamin",
+		"geohash",
+		"gssp",
+		"linestring",
+		"metrodreamin",
+		"placemark",
+		"Placemark",
+		"udocument"
+	]
+}
