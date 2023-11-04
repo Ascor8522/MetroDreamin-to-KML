@@ -2,6 +2,10 @@
 
 Small tool to extract MetroDreamin maps into KML files.
 
+r/ProgrammingRequests: https://discord.gg/h9mJmn8Vpj
+
+OP's request: https://discord.com/channels/1120414216352960642/1169807635885850645/1169807642122792991
+
 ## Requirements
 
 - [Deno](https://deno.land/)

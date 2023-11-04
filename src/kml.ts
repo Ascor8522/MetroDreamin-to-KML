@@ -17,20 +17,20 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin): udocument {
 	const stations = metroDreamin.props.pageProps.fullSystem.map.stations;
 	const _stationsArray = Object.values(stations);
 
-	const folders = linesArray
-		.map(line => [{
-			"@id": `line-${line.name}-folder`,
+	const linesKML = linesArray
+		.map(line => lineToKML(line, stations));
+	const stationsKML = linesArray
+		.map(line => ({
+			"@id": `line-station-${line.name}-folder`,
 			"name": line.name,
 			"Placemark": [
-				lineToKML(line, stations),
 				...line
 					.stationIds
 					.map(id => stations[id])
 					.filter(({ isWaypoint }) => !isWaypoint)
-					.map(station => stationToKML(station, line))
-					.filter(station => !!station),
+					.map(station => stationToKML(station, line)),
 			],
-		}]);
+		}));
 
 	return {
 		"xml": {
@@ -43,12 +43,25 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin): udocument {
 			"@xmlns:kml": "http://www.opengis.net/kml/2.2",
 			"@xmlns:atom": "http://www.w3.org/2005/Atom",
 			"Document": {
+				"@id": "document",
 				"LookAt": {
+					"@id": "lookat",
 					"longitude": longitude,
 					"latitude": latitude,
 					"range": 20000,
 				},
-				"Folder": folders,
+				"Folder": [
+					{
+						"@id": "lines-folder",
+						"name": "Lines",
+						"Placemark": linesKML,
+					},
+					{
+						"@id": "stations-folder",
+						"name": "Stations",
+						"Folder": stationsKML,
+					},
+				],
 			},
 		},
 	};
@@ -61,13 +74,13 @@ export function lineToKML({ name, color, stationIds, mode }: Line, stations: Rec
 		"Style": {
 			"@id": `line-${name}-style`,
 			"LineStyle": {
-				"@id": `line-${name}-line-style`,
+				"@id": `line-${name}-linestyle`,
 				"color": colorToKML(color, true),
 				"colorMode": "normal",
 				"width":
 					mode === Mode.Bus ? 3 :
-						mode === Mode.Tram ? 4 :
-							5,
+					mode === Mode.Tram ? 4 :
+					5,
 			},
 		},
 		"LineString": {
