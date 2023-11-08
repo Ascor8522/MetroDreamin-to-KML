@@ -8,7 +8,12 @@ const icon = {
 	},
 };
 
-export function metrodreaminToKML(metroDreamin: MetroDreamin): udocument {
+interface ToKMLOptions {
+	onlyLines: boolean;
+	onlyStations: boolean;
+}
+
+export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyStations }: ToKMLOptions): udocument {
 	const longitude = metroDreamin.props.pageProps.systemDocData.centroid.lng;
 	const latitude = metroDreamin.props.pageProps.systemDocData.centroid.lat;
 
@@ -32,6 +37,9 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin): udocument {
 			],
 		}));
 
+	const doLines = !onlyStations;
+	const doStations = !onlyLines;
+
 	return {
 		"xml": {
 			"@version": "1.0",
@@ -51,16 +59,16 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin): udocument {
 					"range": 20000,
 				},
 				"Folder": [
-					{
+					...(doLines ? [{
 						"@id": "lines-folder",
 						"name": "Lines",
 						"Placemark": linesKML,
-					},
-					{
+					}] : []),
+					...(doStations ? [{
 						"@id": "stations-folder",
 						"name": "Stations",
 						"Folder": stationsKML,
-					},
+					}] : []),
 				],
 			},
 		},

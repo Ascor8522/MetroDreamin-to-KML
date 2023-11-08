@@ -3,6 +3,7 @@
 	"deno.lint": true,
 	"deno.unstable": false,
 	"cSpell.words": [
+		"datetime",
 		"Dreamin",
 		"geohash",
 		"gssp",
@@ -12,6 +13,7 @@
 		"metrodreamin",
 		"placemark",
 		"Placemark",
+		"STIB",
 		"udocument"
 	]
 }
