@@ -15,5 +15,6 @@
 		"Placemark",
 		"STIB",
 		"udocument"
-	]
+	],
+	"typescript.tsserver.experimental.enableProjectDiagnostics": false
 }
