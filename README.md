@@ -25,7 +25,11 @@ This method is preferred if you just want to use the tool and don't want to modi
 Run the following command:
 
 ```bash
-deno install --allow-net --allow-write https://raw.githubusercontent.com/Ascor8522/MetroDreamin-to-KML/master/src/index.ts --name metrodreamin
+deno install \
+	--allow-net \
+	--allow-write \
+	https://raw.githubusercontent.com/Ascor8522/MetroDreamin-to-KML/master/src/index.ts \
+	--name metrodreamin
 ```
 
 This will make the `metrodreamin` command globally available in your terminal.
@@ -34,7 +38,7 @@ This will make the `metrodreamin` command globally available in your terminal.
 
 This method is preferred if you want to contribute to the tool and make changes to it.
 
-Run the following command:
+Clone the repo, enter its directory, then run the following command:
 
 ```bash
 deno install --allow-net --allow-write src/index.ts --name metrodreamin
@@ -46,6 +50,11 @@ To export the data to a file, run the following command:
 
 ```bash
 metrodreamin [OPTION]... [URL]...
+```
+
+If you are using a local copy of the tool, and haven't installed it globally, run
+```bash
+deno run --allow-net --allow-write src/index.ts [OPTION]... [URL]...
 ```
 
 - The URL is the full URL of the corresponding MetroDreamin page.
