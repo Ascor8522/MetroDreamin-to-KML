@@ -1,4 +1,4 @@
-import { DOMParser } from "deno_dom";
+import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 export function getData(url: string): Promise<MetroDreamin> {
 	return fetch(url)

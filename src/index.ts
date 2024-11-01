@@ -1,7 +1,7 @@
-import * as c from "colors";
-import { format } from "datetime";
-import sanitize from "sanitize_filename";
-import { stringify } from "xml";
+import { stringify } from "jsr:@libs/xml";
+import { format } from "jsr:@std/datetime";
+import { brightBlue, red, underline } from "jsr:@std/fmt/colors";
+import sanitize from "npm:sanitize-filename";
 import { metrodreaminToKML } from "./kml.ts";
 import { getData } from "./metrodreamin.ts";
 
@@ -28,7 +28,7 @@ function main() {
 
 			const metrodreaminKML = metrodreaminToKML(metrodreaminObj, { onlyLines, onlyStations });
 
-			const xml = stringify(metrodreaminKML, { indentSize: 4 });
+			const xml = stringify(metrodreaminKML, { format: { indent: "    " } });
 
 			const { title } = metrodreaminObj.props.pageProps.systemDocData;
 			const timestamp = format(new Date(), "yyyyMMddHHmmss");
@@ -39,13 +39,13 @@ function main() {
 
 function exitError(errorMessage: string): never {
 	console.error(`\
-${c.red("[ERROR]")} ${errorMessage}
-${c.brightBlue("[INFO]")}
-${c.brightBlue("[INFO]")} Usage: metrodreamin [OPTION]... [URL]...
-${c.brightBlue("[INFO]")}
-${c.brightBlue("[INFO]")} ${c.underline("Additional options:")}
-${c.brightBlue("[INFO]")}     --only-lines: Only include lines in the KML.
-${c.brightBlue("[INFO]")}     --only-stations: Only include stations in the KML.
+${red("[ERROR]")} ${errorMessage}
+${brightBlue("[INFO]")}
+${brightBlue("[INFO]")} Usage: metrodreamin [OPTION]... [URL]...
+${brightBlue("[INFO]")}
+${brightBlue("[INFO]")} ${underline("Additional options:")}
+${brightBlue("[INFO]")}     --only-lines: Only include lines in the KML.
+${brightBlue("[INFO]")}     --only-stations: Only include stations in the KML.
 `);
 	Deno.exit(-1);
 }

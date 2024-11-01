@@ -1,19 +1,12 @@
-import { udocument } from "xml/utils/types.ts";
+import { xml_document, xml_node } from "jsr:@libs/xml";
 import { Line, MetroDreamin, Mode, Station } from "./metrodreamin.ts";
-
-const icon = {
-	"Icon": {
-		// Need to use a white pushpin because the default pushpin is yellow and it messes with the color.
-		"href": "http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png",
-	},
-};
 
 interface ToKMLOptions {
 	onlyLines: boolean;
 	onlyStations: boolean;
 }
 
-export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyStations }: ToKMLOptions): udocument {
+export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyStations }: ToKMLOptions): xml_document {
 	const longitude = metroDreamin.props.pageProps.systemDocData.centroid.lng;
 	const latitude = metroDreamin.props.pageProps.systemDocData.centroid.lat;
 
@@ -41,10 +34,14 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyS
 	const doStations = !onlyLines;
 
 	return {
-		"xml": {
-			"@version": "1.0",
-			"@encoding": "UTF-8",
-		},
+		"@version": "1.0",
+		"@encoding": "UTF-8",
+		"@standalone": "yes",
+
+		"~name": "~xml",
+		"~children": [],
+		"#text": "",
+
 		"kml": {
 			"@xmlns": "http://www.opengis.net/kml/2.2",
 			"@xmlns:gx": "http://www.google.com/kml/ext/2.2",
@@ -75,8 +72,12 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyS
 	};
 }
 
-export function lineToKML({ name, color, stationIds, mode }: Line, stations: Record<`${number}`, Station>) {
+export function lineToKML({ name, color, stationIds, mode }: Line, stations: Record<`${number}`, Station>): xml_node {
 	return {
+		"~name": "~xml",
+		"~children": [],
+		"#text": "",
+
 		"@id": `line-${name}-placemark`,
 		"name": name,
 		"Style": {
@@ -87,8 +88,8 @@ export function lineToKML({ name, color, stationIds, mode }: Line, stations: Rec
 				"colorMode": "normal",
 				"width":
 					mode === Mode.Bus ? 3 :
-					mode === Mode.Tram ? 4 :
-					5,
+						mode === Mode.Tram ? 4 :
+							5,
 			},
 		},
 		"LineString": {
@@ -103,8 +104,12 @@ export function lineToKML({ name, color, stationIds, mode }: Line, stations: Rec
 	};
 }
 
-export function stationToKML({ name, lat, lng }: Station, { color }: Line) {
+export function stationToKML({ name, lat, lng }: Station, { color }: Line): xml_node {
 	return {
+		"~name": "~xml",
+		"~children": [],
+		"#text": "",
+
 		"@id": `station-${name}-placemark`,
 		"name": name,
 		"Style": {
@@ -114,7 +119,7 @@ export function stationToKML({ name, lat, lng }: Station, { color }: Line) {
 				"color": colorToKML(color, true),
 				"colorMode": "normal",
 			},
-			...icon,
+			...icon(),
 		},
 		"Point": {
 			"@id": `station-${name}-point`,
@@ -123,6 +128,19 @@ export function stationToKML({ name, lat, lng }: Station, { color }: Line) {
 		},
 	};
 }
+
+export function icon(): xml_node {
+	return {
+		"~name": "~xml",
+		"~children": [],
+		"#text": "",
+
+		"Icon": {
+			// Need to use a white pushpin because the default pushpin is yellow and it messes with the color.
+			"href": "http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png",
+		},
+	};
+};
 
 export function colorToKML(rgb: string, alpha = false) {
 	const [_, r, g, b] = rgb.match(/#(..)(..)(..)/)!;
