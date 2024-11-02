@@ -30,7 +30,7 @@ machine.
 
 > [!NOTE]
 > If you already have a previous version of `metrodreamin-to-kml` installed and
-> wish to upgrade to the lates version, add the `--force` flag to the previous
+> wish to upgrade to the latest version, add the `--force` flag to the previous
 > command.
 
 ## Usage & Command Reference

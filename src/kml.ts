@@ -73,11 +73,12 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyS
 }
 
 export function lineToKML({ name, color, stationIds, mode }: Line, stations: Record<`${number}`, Station>): xml_node {
-	return {
-		"~name": "~xml",
-		"~children": [],
-		"#text": "",
+	const modeWidths = {
+		[Mode.Bus]: 3,
+		[Mode.Tram]: 4,
+	};
 
+	return {
 		"@id": `line-${name}-placemark`,
 		"name": name,
 		"Style": {
@@ -86,10 +87,7 @@ export function lineToKML({ name, color, stationIds, mode }: Line, stations: Rec
 				"@id": `line-${name}-linestyle`,
 				"color": colorToKML(color, true),
 				"colorMode": "normal",
-				"width":
-					mode === Mode.Bus ? 3 :
-						mode === Mode.Tram ? 4 :
-							5,
+				"width": mode ? modeWidths[mode] ?? 5 : 5,
 			},
 		},
 		"LineString": {
@@ -101,15 +99,11 @@ export function lineToKML({ name, color, stationIds, mode }: Line, stations: Rec
 				.map(({ lat, lng }) => `${lng},${lat}`)
 				.join(" "),
 		},
-	};
+	} as unknown as xml_node;
 }
 
 export function stationToKML({ name, lat, lng }: Station, { color }: Line): xml_node {
 	return {
-		"~name": "~xml",
-		"~children": [],
-		"#text": "",
-
 		"@id": `station-${name}-placemark`,
 		"name": name,
 		"Style": {
@@ -119,27 +113,23 @@ export function stationToKML({ name, lat, lng }: Station, { color }: Line): xml_
 				"color": colorToKML(color, true),
 				"colorMode": "normal",
 			},
-			...icon(),
+			...iconToKML(),
 		},
 		"Point": {
 			"@id": `station-${name}-point`,
 			"altitudeMode": "clampToGround",
 			"coordinates": `${lng},${lat}`,
 		},
-	};
+	} as unknown as xml_node;
 }
 
-export function icon(): xml_node {
+export function iconToKML(): xml_node {
 	return {
-		"~name": "~xml",
-		"~children": [],
-		"#text": "",
-
 		"Icon": {
 			// Need to use a white pushpin because the default pushpin is yellow and it messes with the color.
 			"href": "http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png",
 		},
-	};
+	} as unknown as xml_node;
 };
 
 export function colorToKML(rgb: string, alpha = false) {

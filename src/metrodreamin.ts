@@ -1,5 +1,17 @@
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
+export const urlRegex = /^https:\/\/metrodreamin\.com\/(?:view|edit)\/([a-zA-Z0-9]{40})$/;
+
+export function isValidURL(url: string): boolean {
+	return urlRegex.test(url);
+}
+
+export function extractMapId(url: string): string {
+	const match = url.match(urlRegex);
+	if(!match) throw new Error(`Invalid URL: ${url}`);
+	return match[1];
+}
+
 export function getData(url: string): Promise<MetroDreamin> {
 	return fetch(url)
 		.then(res => {
@@ -50,15 +62,15 @@ export interface Map {
 }
 
 export interface Interchange {
-	id: string;
-	stationIds: `${number}`[];
+	id: `${number}`;
+	stationIds: Station["id"][];
 }
 
 export interface Line {
 	color: string;
-	id: string;
+	id: `${number}`;
 	name: string;
-	stationIds: `${number}`[];
+	stationIds: Station["id"][];
 	mode?: Mode;
 	waypointOverrides?: string[];
 }
@@ -96,9 +108,9 @@ export interface AreaByUsage {
 }
 
 export interface Meta {
-	nextInterchangeId: `${number}`;
-	nextLineId: `${number}`;
-	nextStationId: `${number}`;
+	nextInterchangeId: Interchange["id"];
+	nextLineId: Line["id"];
+	nextStationId: Station["id"];
 	systemNumStr: string;
 }
 
