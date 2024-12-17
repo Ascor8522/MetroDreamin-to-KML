@@ -17,6 +17,13 @@ files.
 - [Deno 2](https://deno.land/), a modern JavaScript/TypeScript runtime.
 - An internet connection, to fetch the data from MetroDreamin'.
 
+> [!WARNING]
+> If you already have Deno installed, make sure you have version 2 or later.
+>
+> You can check your Deno version by running `deno --version`.
+>
+> If you have an older version, you can upgrade by running `deno upgrade`.
+
 ### Installation
 
 To install MetroDreamin' to KML on your machine, run the following command:
@@ -31,7 +38,7 @@ machine.
 > [!NOTE]
 > If you already have a previous version of `metrodreamin-to-kml` installed and
 > wish to upgrade to the latest version, add the `--force` flag to the previous
-> command.
+> command before the URL.
 
 ## Usage & Command Reference
 
@@ -65,6 +72,8 @@ data will be exported to separate files.
 
 The files are named after the map on MetroDreamin' and will also contain a
 timestamp, as well as a unique number if multiple URLs were provided.
+
+The files will be saved in the current working directory.
 
 ### Examples
 
