@@ -12,8 +12,8 @@ export function extractMapId(url: string): string {
 	return match[1];
 }
 
-export function getData(url: string): Promise<MetroDreamin> {
-	return fetch(url)
+export function getData(mapId: string): Promise<MetroDreamin> {
+	return fetch(`https://metrodreamin.com/view/${mapId}`)
 		.then(res => {
 			if(!res.ok) throw new Error(`Invalid response: ${res.status} ${res.statusText}`);
 			return res.text();
@@ -56,8 +56,8 @@ export interface FullSystem {
 export interface Map {
 	caption: string;
 	interchanges: Record<number, Interchange>;
-	lines: Record<number, Line>;
-	stations: Record<number, Station>;
+	lines?: Record<number, Line>;
+	stations?: Record<number, Station>;
 	title: string;
 }
 

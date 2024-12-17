@@ -10,9 +10,9 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyS
 	const longitude = metroDreamin.props.pageProps.systemDocData.centroid.lng;
 	const latitude = metroDreamin.props.pageProps.systemDocData.centroid.lat;
 
-	const lines = metroDreamin.props.pageProps.fullSystem.map.lines;
+	const lines = metroDreamin.props.pageProps.fullSystem.map.lines ?? {};
 	const linesArray = Object.values(lines);
-	const stations = metroDreamin.props.pageProps.fullSystem.map.stations;
+	const stations = metroDreamin.props.pageProps.fullSystem.map.stations ?? {};
 	const _stationsArray = Object.values(stations);
 
 	const linesKML = linesArray

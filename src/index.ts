@@ -15,7 +15,7 @@ function main() {
 	Object
 		.keys(rest)
 		.forEach((arg: unknown) => log.warn(`Invalid option: "${arg}". Skipping...`));
-	const urls = _
+	const mapIds = _
 		.map(url => url.toString())
 		.filter(url => {
 			const isValid = isValidURL(url);
@@ -23,11 +23,11 @@ function main() {
 			return isValid;
 		})
 		.map(extractMapId);
-	if(!urls.length) exitError("No valid url provided.");
+	if(!mapIds.length) exitError("No valid url provided.");
 	if(onlyLines && onlyStations) exitError("Cannot use both --only-lines and --only-stations options at the same time.");
 
-	const promises = urls.map(async (url, i) => {
-		const metrodreaminObj = await getData(url);
+	const promises = mapIds.map(async (mapId, i) => {
+		const metrodreaminObj = await getData(mapId);
 		const metrodreaminKML = metrodreaminToKML(metrodreaminObj, { onlyLines, onlyStations });
 		const xml = stringify(metrodreaminKML, { format: { indent: "    " } });
 		const { title } = metrodreaminObj.props.pageProps.systemDocData;
