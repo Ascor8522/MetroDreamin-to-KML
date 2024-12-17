@@ -1,6 +1,6 @@
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
-export const urlRegex = /^https:\/\/metrodreamin\.com\/(?:view|edit)\/([a-zA-Z0-9]{40})$/;
+export const urlRegex = /^https:\/\/metrodreamin\.com\/(?:view|edit)\/((?:[a-zA-Z0-9=]|%3D){40,})$/;
 
 export function isValidURL(url: string): boolean {
 	return urlRegex.test(url);
