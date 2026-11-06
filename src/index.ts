@@ -1,45 +1,63 @@
-import { stringify } from "jsr:@libs/xml";
-import { parseArgs } from "jsr:@std/cli";
-import { format } from "jsr:@std/datetime";
-import * as log from "jsr:@std/log";
-import { basename } from "jsr:@std/path";
-import sanitize from "npm:sanitize-filename";
+import { safeFilename } from "./fs";
+import { metrodreaminToKML } from "./kml";
+import { extractMapId, getData, isValidURL } from "./metrodreamin";
+import { stringifyXML } from "./xml";
 
-import { metrodreaminToKML } from "./kml.ts";
-import { exitError, setupLogger } from "./log.ts";
-import { extractMapId, getData, isValidURL } from "./metrodreamin.ts";
+export default {
+	async fetch(request: Request, _env: Env): Promise<Response> {
+		const url = new URL(request.url);
+		switch(true) {
+			case url.pathname === "/convert":
+				switch(request.method) {
+					case "POST": return foo(request);
+					default: return new Response("Method Not Allowed", { status: 405, headers: { Allow: "POST" } });
+				}
+			default: return new Response("Not Found", { status: 404 });
+		}
+	},
+} satisfies ExportedHandler<Env>;
 
-function main() {
-	const { onlyLines, onlyStations, _, ...rest } = parseArgs(Deno.args);
+async function foo(request: Request) {
+	let form: FormData;
+	try {
+		form = await request.formData();
+	} catch {
+		return errorResponse("Submit the form using valid form data.", 400);
+	}
 
-	Object
-		.keys(rest)
-		.forEach((arg: unknown) => log.warn(`Invalid option: "${arg}". Skipping...`));
-	const mapIds = _
-		.map(url => url.toString())
-		.filter(url => {
-			const isValid = isValidURL(url);
-			if(!isValid) log.warn(`Invalid URL: "${url}". Skipping...`);
-			return isValid;
-		})
-		.map(extractMapId);
-	if(!mapIds.length) exitError("No valid url provided.");
-	if(onlyLines && onlyStations) exitError("Cannot use both --only-lines and --only-stations options at the same time.");
+	const mapUrl = form.get("url");
+	if(typeof mapUrl !== "string" || !isValidURL(mapUrl)) {
+		return errorResponse("Enter a valid MetroDreamin' map URL.", 400);
+	}
+	const elements = form.get("elements");
+	if(elements !== "both" && elements !== "only-lines" && elements !== "only-stations") {
+		return errorResponse("Choose which map elements to export.", 400);
+	}
 
-	const promises = mapIds.map(async (mapId, i) => {
-		const metrodreaminObj = await getData(mapId);
-		const metrodreaminKML = metrodreaminToKML(metrodreaminObj, { onlyLines, onlyStations });
-		const xml = stringify(metrodreaminKML, { format: { indent: "    " } });
-		const { title } = metrodreaminObj.props.pageProps.systemDocData;
-		const timestamp = format(new Date(), "yyyyMMddHHmmss");
-		const filename = `./${sanitize(title) || "untitled"}_${timestamp}_${i}.kml`;
-		return Deno.writeTextFile(basename(filename), xml);
-	});
-
-	return Promise
-		.all(promises)
-		.catch((err: Error) => exitError(err.message));
+	try {
+		const metroDreamin = await getData(extractMapId(mapUrl));
+		const kml = metrodreaminToKML(metroDreamin, {
+			onlyLines: elements === "only-lines",
+			onlyStations: elements === "only-stations",
+		});
+		const title = metroDreamin.props.pageProps.systemDocData.title;
+		const filename = `${safeFilename(title) || "untitled"}.kml`;
+		return new Response(stringifyXML(kml), {
+			headers: {
+				"Content-Type": "application/vnd.google-earth.kml+xml; charset=utf-8",
+				"Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+				"Cache-Control": "no-store",
+			},
+		});
+	} catch(error) {
+		console.error("KML conversion failed", error);
+		return errorResponse("Unable to convert this MetroDreamin' map. Check the URL and try again.", 502);
+	}
 }
 
-setupLogger();
-main();
+function errorResponse(message: string, status: number): Response {
+	return new Response(message, {
+		status,
+		headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+	});
+}

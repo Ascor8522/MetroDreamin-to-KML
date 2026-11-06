@@ -1,0 +1,12 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "metrodreamin-to-kml",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-11-06",
+	"assets": {
+		"directory": "./public",
+		"binding": "ASSETS"
+	},
+	"workers_dev": true,
+	"preview_urls": false
+}

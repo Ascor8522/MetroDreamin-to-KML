@@ -1,5 +1,3 @@
-import { DOMParser } from "jsr:@b-fuze/deno-dom";
-
 export const urlRegex = /^https:\/\/metrodreamin\.com\/(?:view|edit)\/((?:[a-zA-Z0-9=]|%3D){40,})$/;
 
 export function isValidURL(url: string): boolean {
@@ -18,10 +16,13 @@ export function getData(mapId: string): Promise<MetroDreamin> {
 			if(!res.ok) throw new Error(`Invalid response: ${res.status} ${res.statusText}`);
 			return res.text();
 		})
-		.then(html => new DOMParser()
-			.parseFromString(html, "text/html")!
-			.querySelector("#__NEXT_DATA__")!
-			.innerHTML)
+		.then(html => {
+			const script = html.match(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)
+				?.find(tag => /\bid\s*=\s*(?:"__NEXT_DATA__"|'__NEXT_DATA__'|__NEXT_DATA__)(?:\s|>)/i.test(tag));
+			const json = script?.match(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/i)?.[1];
+			if(!json) throw new Error("MetroDreamin' page did not contain map data.");
+			return json;
+		})
 		.then(json => JSON.parse(json) as MetroDreamin);
 }
 

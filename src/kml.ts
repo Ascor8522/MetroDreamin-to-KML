@@ -1,12 +1,13 @@
-import { xml_document, xml_node } from "jsr:@libs/xml";
-import { Line, MetroDreamin, Mode, Station } from "./metrodreamin.ts";
+import type { Line, MetroDreamin, Station } from "./metrodreamin.ts";
+import { Mode } from "./metrodreamin.ts";
+import type { XmlNode } from "./xml";
 
-interface ToKMLOptions {
+export interface ToKMLOptions {
 	onlyLines: boolean;
 	onlyStations: boolean;
 }
 
-export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyStations }: ToKMLOptions): xml_document {
+export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyStations }: ToKMLOptions): XmlNode {
 	const longitude = metroDreamin.props.pageProps.systemDocData.centroid.lng;
 	const latitude = metroDreamin.props.pageProps.systemDocData.centroid.lat;
 
@@ -72,7 +73,7 @@ export function metrodreaminToKML(metroDreamin: MetroDreamin, { onlyLines, onlyS
 	};
 }
 
-export function lineToKML({ name, color, stationIds, mode }: Line, stations: Record<`${number}`, Station>): xml_node {
+export function lineToKML({ name, color, stationIds, mode }: Line, stations: Record<`${number}`, Station>): XmlNode {
 	const modeWidths = {
 		[Mode.Bus]: 3,
 		[Mode.Tram]: 4,
@@ -99,10 +100,10 @@ export function lineToKML({ name, color, stationIds, mode }: Line, stations: Rec
 				.map(({ lat, lng }) => `${lng},${lat}`)
 				.join(" "),
 		},
-	} as unknown as xml_node;
+	};
 }
 
-export function stationToKML({ name, lat, lng }: Station, { color }: Line): xml_node {
+export function stationToKML({ name, lat, lng }: Station, { color }: Line): XmlNode {
 	return {
 		"@id": `station-${name}-placemark`,
 		"name": name,
@@ -120,19 +121,19 @@ export function stationToKML({ name, lat, lng }: Station, { color }: Line): xml_
 			"altitudeMode": "clampToGround",
 			"coordinates": `${lng},${lat}`,
 		},
-	} as unknown as xml_node;
+	};
 }
 
-export function iconToKML(): xml_node {
+export function iconToKML(): XmlNode {
 	return {
 		"Icon": {
 			// Need to use a white pushpin because the default pushpin is yellow and it messes with the color.
 			"href": "http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png",
 		},
-	} as unknown as xml_node;
-};
+	};
+}
 
 export function colorToKML(rgb: string, alpha = false) {
 	const [_, r, g, b] = rgb.match(/#(..)(..)(..)/)!;
 	return `${alpha ? "ff" : ""}${b}${g}${r}`;
-};
+}

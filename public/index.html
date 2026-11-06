@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="color-scheme" content="light dark">
+		<title>MetroDreamin' to KML</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@anyblades/blades@3/css/blades.ninja.min.css">
+	</head>
+	<body>
+		<header class="container">
+			<nav>
+				<ul></ul>
+				<ul>
+					<li><a href="https://metrodreamin.com/">
+						<i><img src="https://www.google.com/s2/favicons?domain=metrodreamin.com&amp;sz=64"></i>
+						MetroDreamin'
+					</a></li>
+					<li><a href="https://github.com/Ascor8522/MetroDreamin-to-KML">
+						<i><img src="https://www.google.com/s2/favicons?domain=github.com&amp;sz=64"></i>
+						GitHub
+					</a></li>
+				</ul>
+			</nav>
+		</header>
+		<main class="container">
+			<hgroup>
+				<h1>MetroDreamin' to KML</h1>
+				<p>Convert MetroDreamin' maps to KML files easily.</p>
+			</hgroup>
+			<section>
+				<form action="/convert" method="POST">
+						<article>
+						<fieldset>
+							<label>
+								MetroDreamin' Map URL:
+								<input
+									type="url"
+									name="url"
+									placeholder="https://metrodreamin.com/view/…"
+									pattern="https://metrodreamin\.com/(view|edit)/([a-zA-Z0-9=]|%3D){40,}"
+									required
+								>
+								<small>Enter the URL of the MetroDreamin' map you want to convert.</small>
+							</label>
+						</fieldset>
+						<fieldset>
+							<legend>Elements to Export:</legend>
+							<label><input type="radio" name="elements" value="both" checked> Both lines and stations</label>
+							<label><input type="radio" name="elements" value="only-lines"> Only lines</label>
+							<label><input type="radio" name="elements" value="only-stations"> Only stations</label>
+						</fieldset>
+						<button type="submit">Convert to KML</button>
+					</article>
+					</form>
+			</section>
+		</main>
+	</body>
+</html>

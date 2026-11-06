@@ -1,0 +1,17 @@
+{
+	"name": "metrodreamin-to-kml",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy",
+		"test": "node --experimental-strip-types --experimental-transform-types --test src/*.test.ts",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@types/node": "^26.6.6",
+		"typescript": "^7.0.2",
+		"wrangler": "^4.158.0"
+	},
+	"packageManager": "pnpm@11.18.0"
+}
