@@ -7,6 +7,15 @@
 		"directory": "./public",
 		"binding": "ASSETS"
 	},
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		},
+		"traces": {
+			"enabled": true
+		}
+	},
 	"workers_dev": true,
 	"preview_urls": false
 }
